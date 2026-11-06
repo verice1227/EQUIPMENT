@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c1727">
+  <meta name="description" content="Search equipment directly on the MSLP floor map screenshot.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Equipment Finder">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./tiles.js" defer></script>
+  <script src="./app.js" defer></script>
+  <title>Equipment Map Finder</title>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="28" height="28"><rect x="4" y="5" width="19" height="19" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 12h9M9 17h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="22" cy="22" r="6" fill="#102234" stroke="#64e7c4" stroke-width="2"/><path d="m26.5 26.5 4 4" stroke="#64e7c4" stroke-width="2.5" stroke-linecap="round"/></svg></span><span><strong>Equipment Finder</strong><small>MSLP Test · Site 1 · 4th Floor</small></span></div>
+      <span class="source-pill"><i></i> Screenshot-based map</span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy"><span class="eyebrow">EQUIPMENT LOCATION SEARCH</span><h1>Find a machine <em>on the floor.</em></h1><p>Search equipment IDs or the text shown inside a status tile. The matching box lights up in its original location.</p></div>
+        <div class="search-panel">
+          <div class="search-field"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><label class="sr-only" for="search">Search equipment</label><input id="search" type="search" placeholder="Try IFLEX056, HPSS033, PREC…" autocomplete="off" autocapitalize="characters" spellcheck="false" list="suggestions"><datalist id="suggestions"></datalist><button id="clear" type="button" class="clear-button" aria-label="Clear search" hidden>×</button></div>
+          <div class="search-subrow"><span id="resultCount" aria-live="polite">Search to highlight equipment</span><div class="result-nav"><button id="previous" type="button" aria-label="Previous match" disabled>‹</button><span id="resultPosition">—</span><button id="next" type="button" aria-label="Next match" disabled>›</button></div></div>
+        </div>
+      </section>
+
+      <section class="workspace" aria-label="Searchable floor plan">
+        <div class="map-panel">
+          <div class="panel-header"><div><h2>Equipment floor map</h2><p>Tap a colored tile to inspect its label · drag to explore</p></div><div class="zoom-controls"><button id="zoomOut" type="button" aria-label="Zoom out">−</button><span id="zoomText">100%</span><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomFit" type="button" class="fit-button">Fit</button></div></div>
+          <div id="mapViewport" class="map-viewport" tabindex="0" aria-label="Scrollable equipment screenshot with searchable highlights">
+            <div id="scaledSpace" class="scaled-space"><div id="mapCanvas" class="map-canvas"><img class="floor-image" src="./floor-map.png" alt="MSLP Test Site 1 fourth-floor equipment layout" draggable="false"><div class="search-veil" aria-hidden="true"></div><div id="hotspots" class="hotspots"></div></div></div>
+          </div>
+          <div class="map-footer"><span><span class="yellow-swatch"></span> Yellow outline = matching equipment</span><span id="mapInfo">Original screenshot · static reference</span></div>
+        </div>
+
+        <aside class="details" aria-labelledby="detailHeading"><div class="details-heading"><span class="eyebrow">SELECTED EQUIPMENT</span><h2 id="detailHeading">Tile details</h2></div><div id="emptyDetail" class="details-empty"><div class="empty-icon" aria-hidden="true">⌖</div><p>Search or tap a colored equipment box to view its information.</p></div><div id="detailContent" hidden><div class="detail-colorline"><span id="detailSwatch" class="detail-swatch"></span><span id="detailColor"></span><span id="reviewBadge" class="review-badge">OCR review</span></div><div id="detailId" class="detail-id">—</div><div class="detail-label">Second line</div><div id="detailSubtitle" class="detail-subtitle">—</div><div class="detail-separator"></div><dl><div><dt>Tile number</dt><dd id="detailNumber">—</dd></div><div><dt>Position (px)</dt><dd id="detailCoords">—</dd></div><div><dt>Tile dimensions</dt><dd id="detailSize">—</dd></div></dl><div class="edit-block"><h3>Correct OCR label</h3><p>Small text may be misread. Corrections stay on this device only.</p><label for="editId">Equipment ID</label><input id="editId" type="text" maxlength="48" autocomplete="off" spellcheck="false"><label for="editSubtitle">Second line</label><input id="editSubtitle" type="text" maxlength="64" autocomplete="off" spellcheck="false"><div class="edit-buttons"><button id="saveEdit" type="button" class="primary-small">Save label</button><button id="resetEdit" type="button" class="ghost-small">Reset</button></div></div></div></aside>
+      </section>
+      <div class="below-map"><p>Equipment names were read automatically from the screenshot and may contain errors. Tile positions and colors come from the supplied image. This app does not display live equipment status.</p><button id="exportIndex" type="button">Export reviewed index (CSV)</button></div>
+    </main>
+    <footer>Equipment Finder · Offline-capable PWA · No network data connection</footer>
+  </div>
+</body>
+</html>
