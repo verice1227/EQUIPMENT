@@ -5,6 +5,14 @@
   const MAP_WIDTH=1902,MAP_HEIGHT=827, STORAGE_KEY='equipment-finder-reviewed-v1';
   const COLORS={green:'#008000',maroon:'#800000',red:'#ff0000',orange:'#ff8000',blue:'#0080ff',yellow:'#ffff00'};
   const records=SOURCE.map((record,i)=>({...record,index:i+1,id:record.id||record.ocr_id||'Tile '+String(i+1).padStart(3,'0'),subtitle:record.subtitle||record.ocr_detail||''}));
+  // v6.1's image_* fields preserve where the tile appears in the original screenshot.
+  function isOverlay(record){
+    return !!record.added||['x','y','w','h'].some(key=>record[key]!==record['image_'+key]&&Number.isFinite(record['image_'+key]));
+  }
+  function updateOverlayLabel(record){
+    const btn=buttons.get(record.index);if(!btn||!isOverlay(record))return;
+    btn.textContent=record.id+(record.subtitle?'\n'+record.subtitle:'');
+  }
   let corrections={},selected=null,matches=[],matchIndex=0,query='',zoom=.75,fullscreen=false,pendingImport=null;
   const buttons=new Map();
 
@@ -62,6 +70,12 @@
       const btn=document.createElement('button');btn.type='button';btn.className='hotspot';btn.dataset.index=String(record.index);
       btn.style.left=(record.x-2)+'px';btn.style.top=(record.y-2)+'px';btn.style.width=(record.w+4)+'px';btn.style.height=(record.h+4)+'px';
       btn.style.backgroundPosition=(-record.x+2)+'px '+(-record.y+2)+'px';
+      if(isOverlay(record)){
+        btn.classList.add('virtual-tile');
+        btn.style.setProperty('--tile-color',COLORS[record.color]||COLORS.yellow);
+        btn.style.color=record.color==='yellow'?'#111':'#fff';
+        btn.textContent=record.id+(record.subtitle?'\n'+record.subtitle:'');
+      }
       btn.setAttribute('aria-label','Equipment '+record.id+'; '+record.subtitle);
       btn.title=record.id+(record.subtitle?' · '+record.subtitle:'');
       btn.addEventListener('click',()=>selectRecord(record,true));
@@ -90,7 +104,7 @@
       const btn=buttons.get(r.index),found=active&&set.has(r.index);
       btn.classList.toggle('match',found);
       btn.classList.toggle('selected',selected===r.index);
-      if(found){btn.style.backgroundImage="url('./floor-map.png')";}
+      if(found&&!isOverlay(r)){btn.style.backgroundImage="url('./floor-map.png')";}
       else btn.style.backgroundImage='none';
     });
     $('resultCount').textContent=active?`${matches.length} matching ${matches.length===1?'tile':'tiles'} out of ${records.length}`:`${records.length} equipment tiles indexed · type to search`;
@@ -158,7 +172,7 @@
     record.id=id;record.subtitle=subtitle;
     corrections[record.index]={id,subtitle};
     saveCorrections();renderSuggestions();
-    for(const r of records){const b=buttons.get(r.index);b.title=r.id+(r.subtitle?' · '+r.subtitle:'');b.setAttribute('aria-label','Equipment '+r.id+'; '+r.subtitle);}
+    for(const r of records){const b=buttons.get(r.index);b.title=r.id+(r.subtitle?' · '+r.subtitle:'');b.setAttribute('aria-label','Equipment '+r.id+'; '+r.subtitle);updateOverlayLabel(r);}
     if(query)applySearch();else selectRecord(record);
   }
   function resetLabel(){
@@ -166,6 +180,7 @@
     delete corrections[record.index];saveCorrections();
     const base=SOURCE[record.index-1];
     record.id=base.id||base.ocr_id||'Tile '+String(record.index).padStart(3,'0');record.subtitle=base.subtitle||base.ocr_detail||'';
+    updateOverlayLabel(record);
     renderSuggestions();if(query)applySearch();else selectRecord(record);
   }
   function message(text){$('maintenanceMessage').textContent=text;}
