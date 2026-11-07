@@ -2,7 +2,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const SOURCE = Array.isArray(window.EQUIPMENT_TILES) ? window.EQUIPMENT_TILES : [];
-  const MAP_WIDTH=1899,MAP_HEIGHT=821, STORAGE_KEY='equipment-finder-reviewed-v1';
+  const MAP_WIDTH=1902,MAP_HEIGHT=827, STORAGE_KEY='equipment-finder-reviewed-v1';
   const COLORS={green:'#008000',maroon:'#800000',red:'#ff0000',orange:'#ff8000',blue:'#0080ff',yellow:'#ffff00'};
   const records=SOURCE.map((record,i)=>({...record,index:i+1,id:record.id||record.ocr_id||'Tile '+String(i+1).padStart(3,'0'),subtitle:record.subtitle||record.ocr_detail||''}));
   let corrections={},selected=null,matches=[],matchIndex=0,query='',zoom=.75,fullscreen=false;

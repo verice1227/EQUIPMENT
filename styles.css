@@ -39,3 +39,8 @@ body.map-fullscreen{overflow:hidden}
   .map-fullscreen .map-footer{font-size:10px}
 }
 @media(max-width:480px){.map-fullscreen .map-footer>span:first-child{display:none}}
+
+/* Enhanced screenshot dimensions; hotspot coordinates are aligned to this image. */
+.map-canvas{width:1902px;height:827px}
+:root .floor-image{width:1902px;height:827px}
+.map-canvas.searching .hotspot.match{background-size:1902px 827px}
