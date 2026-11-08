@@ -1,4 +1,4 @@
-const CACHE='equipment-map-search-v8';
+const CACHE='equipment-map-search-v8-expanded-bg';
 const ASSETS=['./','./index.html','./styles.css','./app.js','./tiles.js','./floor-map.png','./manifest.webmanifest','./icons/icon.svg','./icons/icon-192.png','./icons/icon-512.png'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('equipment-map-search-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));

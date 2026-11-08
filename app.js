@@ -3,7 +3,10 @@
   const $ = id => document.getElementById(id);
   const SOURCE = Array.isArray(window.EQUIPMENT_TILES) ? window.EQUIPMENT_TILES : [];
   const MAP_WIDTH=1902,MAP_HEIGHT=827, STORAGE_KEY='equipment-finder-reviewed-v1';
-  const COLORS={green:'#008000',maroon:'#800000',red:'#ff0000',orange:'#ff8000',blue:'#0080ff',yellow:'#ffff00'};
+  const COLORS={
+    green:'#008000',maroon:'#800000',red:'#ff0000',orange:'#ff8000',blue:'#0080ff',yellow:'#ffff00',
+    purple:'#8000cc',cyan:'#00cfd8',pink:'#ff69b4',gray:'#808080',white:'#ffffff',black:'#000000'
+  };
   const defaultInk=color=>color==='yellow'?'black':'white';
   const records=SOURCE.map((record,i)=>({...record,index:i+1,image_color:record.image_color||record.color,image_text_color:record.image_text_color||defaultInk(record.image_color||record.color),text_color:record.text_color||defaultInk(record.color),id:record.id||record.ocr_id||'Tile '+String(i+1).padStart(3,'0'),subtitle:record.subtitle||record.ocr_detail||''}));
   let corrections={},selected=null,matches=[],matchIndex=0,query='',zoom=.75,fullscreen=false,pendingImport=null;
@@ -22,7 +25,7 @@
   }
   function searchTerms(text){return text.split(/[,;\n]+/).map(s=>s.trim()).filter(s=>normalized(s));}
   function matchesQuery(record,text){return searchTerms(text).some(term=>isMatch(record,term));}
-  function colorName(name){return ({green:'Green',maroon:'Dark red',red:'Red',orange:'Orange',blue:'Blue',yellow:'Yellow'})[name]||'Unknown';}
+  function colorName(name){return ({green:'Green',maroon:'Dark red',red:'Red',orange:'Orange',blue:'Blue',yellow:'Yellow',purple:'Purple',cyan:'Cyan',pink:'Pink',gray:'Gray',white:'White',black:'Black'})[name]||'Unknown';}
   function normalizeColor(value){const text=String(value||'').trim().toLowerCase();return ['dark red','darkred','dark_red'].includes(text)?'maroon':text;}
   function rgb(hex){return [1,3,5].map(i=>parseInt(hex.slice(i,i+2),16));}
   function fallbackTints(enabled){
@@ -298,7 +301,7 @@
       const textColorColumn=column('text_color'),textColor=textColorColumn>=0?row[textColorColumn].trim().toLowerCase():record.text_color;
       if(!id||id.length>48||subtitle.length>64)throw new Error(`Invalid equipment label at row ${i+1}. Maximum lengths: ID 48, second line 64.`);
       if(/[\u0000-\u001F]/.test(id+subtitle))throw new Error(`Control character in label at row ${i+1}.`);
-      if(!COLORS[color])throw new Error(`Invalid color at row ${i+1}: ${color}. Choose green, maroon, red, orange, blue, or yellow.`);
+      if(!COLORS[color])throw new Error(`Invalid color at row ${i+1}: ${color}. Choose green, maroon, red, orange, blue, yellow, purple, cyan, pink, gray, white, or black.`);
       if(!['white','black'].includes(textColor))throw new Error(`Invalid text_color at row ${i+1}: ${textColor}. Choose white or black.`);
       if(id!==record.id||subtitle!==record.subtitle||color!==record.color||textColor!==record.text_color)changes.push({number,id,subtitle,color,text_color:textColor});
     }
