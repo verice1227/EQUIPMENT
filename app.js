@@ -350,10 +350,13 @@
   }
   function resetLabel(){
     const record=records.find(r=>r.index===selected);if(!record)return;
-    delete corrections[record.index];saveCorrections();
     const base=SOURCE[record.index-1];
+    if(!base){message('This equipment was added manually and has no original OCR label to reset.');return;}
+    const position={x:record.x,y:record.y,w:record.w,h:record.h};
     const oldColor=record.color,oldTextColor=record.text_color;
     record.id=base.id||base.ocr_id||'Tile '+String(record.index).padStart(3,'0');record.subtitle=base.subtitle||base.ocr_detail||'';record.color=base.color;record.text_color=base.text_color||defaultInk(base.color);
+    if(relocated(record)){persistRecord(record);}else{delete corrections[record.index];saveCorrections();}
+    Object.assign(record,position);paintHotspot(record);
     const btn=buttons.get(record.index);btn.title=record.id+(record.subtitle?' · '+record.subtitle:'');btn.setAttribute('aria-label','Equipment '+record.id+'; '+record.subtitle);
     if(oldColor!==record.color||oldTextColor!==record.text_color)refreshMapColors();
     renderSuggestions();if(query)applySearch();else selectRecord(record);
