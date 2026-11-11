@@ -59,7 +59,32 @@ body.map-fullscreen{overflow:hidden}
 .import-preview p{margin:0 0 11px;color:#ddf7f3;font-size:12px}
 .maintenance-panel .maintenance-message{min-height:16px;margin:12px 0 0;color:#96d8e4;font-size:11px}
 @media(max-width:700px){.maintenance-panel{padding:16px}.maintenance-actions button,.maintenance-actions .import-label{flex:1 1 100%}}
-/* v6 compatibility: v6.1-added or relocated tiles are drawn over the static screenshot. */
-.hotspot.virtual-tile{background:var(--tile-color,#ffff00);white-space:pre-line;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-weight:800;font-size:12px;line-height:1.06;overflow:hidden;border:2px dashed #ffe77c;text-shadow:0 1px 2px #0009;word-break:break-word;z-index:4}
-.map-canvas.searching .hotspot.virtual-tile.match{background-image:none!important;background-color:var(--tile-color,#ffff00);outline:3px solid #ffd748;box-shadow:0 0 0 7px #f5ca405c,0 0 20px #ffe47b;z-index:5}
-.map-canvas.searching .hotspot.virtual-tile:not(.match){opacity:.3}
+
+/* v7 color edits: canvas recoloring keeps original equipment lettering visible. */
+.edit-block select{display:block;width:100%;height:39px;border-radius:8px;background:#0c1a2a;color:#e4f5fb;border:1px solid #34516b;padding:0 10px;font-size:12px}
+.map-viewport{touch-action:none}
+.map-editor-toolbar{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.map-editor-toolbar button,.map-editor-buttons button{background:#203b52;color:#e9f8ff;border:1px solid #45677b;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:700}
+.map-editor-toolbar #mapToolActions{display:flex;flex-wrap:wrap;gap:7px}
+.map-editor-toolbar button:disabled{opacity:.4;cursor:default}
+.map-editor-panel{margin:0 15px 12px;padding:14px;border:1px solid #3b748b;background:#112d40;border-radius:12px;color:#eaf7fc}
+.map-editor-panel h3{margin:0 0 6px;font-size:15px}.map-editor-panel p{margin:6px 0 12px;color:#b8d0df;font-size:12px;line-height:1.45}
+.map-editor-panel label{display:block;font-size:11px;color:#c3dce8;margin:8px 0 4px}
+.map-editor-panel input,.map-editor-panel select{width:100%;background:#0b1e2e;color:#fff;border:1px solid #41627c;border-radius:7px;padding:9px;font-size:13px}
+.map-viewport,.map-canvas{background:#fff}
+.hotspot.virtual-tile{font-size:clamp(8px,0.72vw,12px);text-shadow:none;border:1px solid #7776!important;line-height:1.1}
+.hotspot.virtual-tile.vertical-tile .virtual-label{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.position-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.map-editor-buttons{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.map-editor-buttons #saveMapEdit{background:#55d5e5;border-color:#55d5e5;color:#071e2e}
+.hotspot.virtual-tile{display:flex;align-items:center;justify-content:center;border:1px solid #ddeaf7!important;z-index:4;padding:2px;white-space:pre-line;text-align:center;font-size:12px;font-weight:800;line-height:1.14;overflow:hidden;text-shadow:0 0 2px #1119}
+.hotspot.virtual-tile .virtual-label{pointer-events:none;overflow-wrap:anywhere}
+.map-canvas.searching .hotspot.virtual-tile.match{background-image:none!important}
+.geometry-editor{position:absolute;z-index:15;border:3px solid #54ecff;box-shadow:0 0 0 2px #06293e,0 0 14px #56e6f9a0;background:#55ddff24;cursor:move;touch-action:none}
+.geometry-editor .resize-grip{position:absolute;right:-10px;bottom:-10px;width:23px;height:23px;background:#ffdd54;border:2px solid #11364b;border-radius:5px;cursor:nwse-resize;touch-action:none}
+@media(max-width:700px){.position-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.map-editor-toolbar{padding:0 12px 9px}.map-editor-toolbar button{font-size:11px;padding:9px}}
+.map-canvas.searching .hotspot.match{background-image:var(--floor-snapshot,url('./floor-map.svg'))}
+.recolor-tint{position:absolute;inset:0;display:block;mix-blend-mode:color;opacity:.9;pointer-events:none}
+.map-canvas.searching .hotspot:not(.match) .recolor-tint{display:none}
+.map-viewport,.map-canvas{background:#fff}
+.hotspot.virtual-tile{font-size:12px;text-shadow:none;border:1px solid #6666!important;line-height:1.08}
+.hotspot.virtual-tile.vertical-tile .virtual-label{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
