@@ -2,7 +2,7 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const SOURCE = Array.isArray(window.EQUIPMENT_TILES) ? window.EQUIPMENT_TILES : [];
-  const MAP_WIDTH=1902,MAP_HEIGHT=827, STORAGE_KEY='equipment-finder-reviewed-v1';
+  const MAP_WIDTH=1902,MAP_HEIGHT=827, STORAGE_KEY='equipment-finder-l4-map-2026-v1';
   const COLORS={
     green:'#008000',maroon:'#800000',red:'#ff0000',orange:'#ff8000',blue:'#0080ff',yellow:'#ffff00',
     purple:'#8000cc',cyan:'#00cfd8',pink:'#ff69b4',gray:'#808080',white:'#ffffff',black:'#000000'
@@ -16,7 +16,7 @@
   let editorMode='',draft=null,dragStart=null;
   const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
   const relocated=r=>!r.added&&(r.x!==r.image_x||r.y!==r.image_y||r.w!==r.image_w||r.h!==r.image_h);
-  const virtual=r=>r.added||relocated(r);
+  const virtual=r=>r.vector_tile||r.added||relocated(r);
   function geometryOK(r){return [r.x,r.y,r.w,r.h].every(Number.isFinite)&&r.w>=12&&r.h>=12&&r.x>=0&&r.y>=0&&r.x+r.w<=MAP_WIDTH&&r.y+r.h<=MAP_HEIGHT;}
   function persistRecord(r){corrections[r.index]={id:r.id,subtitle:r.subtitle,color:r.color,text_color:r.text_color,x:r.x,y:r.y,w:r.w,h:r.h,...(r.added?{added:true}:{})};return saveCorrections();}
 
@@ -47,9 +47,9 @@
     }
   }
   function refreshMapColors(){
-    const changed=records.filter(r=>!r.added&&(r.color!==r.image_color||r.text_color!==r.image_text_color));
+    const changed=records.filter(r=>!r.added&&!r.vector_tile&&(r.color!==r.image_color||r.text_color!==r.image_text_color));
     if(!changed.length){
-      $('floorImage').src='./floor-map.png';
+      $('floorImage').src='./floor-map.svg';
       $('mapCanvas').style.removeProperty('--floor-snapshot');
       fallbackTints(false);return;
     }
@@ -84,7 +84,7 @@
       fallbackTints(false);
     }catch{
       // file:// can restrict canvas pixel access; retain a visible tint fallback.
-      $('floorImage').src='./floor-map.png';
+      $('floorImage').src='./floor-map.svg';
       $('mapCanvas').style.removeProperty('--floor-snapshot');
       fallbackTints(true);
     }
@@ -141,8 +141,9 @@
     btn.setAttribute('aria-label','Equipment '+record.id+'; '+record.subtitle);btn.title=record.id+(record.subtitle?' · '+record.subtitle:'');
     btn.classList.toggle('virtual-tile',virtual(record));
     if(virtual(record)){
-      btn.style.backgroundColor=COLORS[record.color];btn.style.color=record.text_color;
-      btn.replaceChildren();const label=document.createElement('span');label.className='virtual-label';label.textContent=record.id+'\n'+record.subtitle;btn.append(label);
+      btn.style.backgroundColor=(record.ppt_hex&&record.color===record.ppt_color)?record.ppt_hex:COLORS[record.color];btn.style.color=record.text_color;
+      btn.classList.toggle('vertical-tile',!!record.vertical);
+      btn.replaceChildren();const label=document.createElement('span');label.className='virtual-label';label.textContent=record.id+(record.map_label_only?'':'\n'+record.subtitle);btn.append(label);
     }else{btn.style.backgroundColor='';btn.style.color='';btn.replaceChildren();}
   }
   function setZoom(value){
@@ -483,7 +484,7 @@
     originalMap=new Image();
     originalMap.onload=refreshMapColors;
     originalMap.onerror=()=>message('The floor-map image could not be loaded for color editing.');
-    originalMap.src='./floor-map.png';
+    originalMap.src='./floor-map.svg';
     refreshMapColors();
     $('search').addEventListener('input',applySearch);
     $('search').addEventListener('focus',renderSuggestions);
